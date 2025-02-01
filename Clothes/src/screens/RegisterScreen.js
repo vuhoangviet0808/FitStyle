@@ -1,18 +1,46 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, ImageBackground, Image, StyleSheet } from 'react-native';
+import React, { useState} from 'react';
+import { View, Text, TextInput, Alert, TouchableOpacity, ImageBackground, Image, StyleSheet } from 'react-native';
 import { globalStyles, colors } from '../theme/globalStyles';
-import {useNavigation} from '@react-navigation/native';
+import { registerUser} from "../services/authService";
 
-export default function LoginScreen() {
-  const navigation = useNavigation();
+export default function RegisterScreen() {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    
+    const handleRegister = async () => {
+        if (!name.trim() || !email.trim() || !password.trim()) {
+            Alert.alert("Error", "Please fill in all fields");
+            return;
+        }
+
+        setLoading(true); 
+
+        try {
+            const result = await registerUser(name, email, password);
+
+            if (result.ok) {
+                Alert.alert("Success", result.message);
+            } else {
+                Alert.alert("Error", result.message || "Something went wrong");
+            }
+        } catch (error) {
+            console.error("Registration Error:", error);
+            Alert.alert("Error", "Network request failed. Please try again.");
+        } finally {
+            setLoading(false); 
+        }
+    };
+
   return (
     <View style={styles.container}>
       <ImageBackground
         source={require('../assets/images/backgroundbrown.jpg')}
         style={styles.topBackground}
-        resizeMode="cover"
+        resizeMode="container"
       >
-        <Text style={styles.headerTitle}>Welcome{"\n"}Back!</Text>
+        <Text style={styles.headerTitle}>Create an{"\n"}account</Text>
       </ImageBackground>
       <ImageBackground
         source={require('../assets/images/backgroundwhite.jpg')} 
@@ -20,33 +48,57 @@ export default function LoginScreen() {
         resizeMode="cover"
       >
         <View style={styles.formContainer}>
+          <Text style={globalStyles.label}>Name</Text>
+          <View style={styles.inputWrapper}>
+            <Image source={require('../assets/icon/people.png')} style={styles.icon} />
+            <TextInput 
+                style={styles.input} placeholder="Enter Your Name" 
+                placeholderTextColor={colors.textDark}
+                value={name}
+                onChangeText={setName}
+            />
+          </View>
+
           <Text style={globalStyles.label}>Email</Text>
           <View style={styles.inputWrapper}>
             <Image source={require('../assets/icon/email.png')} style={styles.icon} />
-            <TextInput style={styles.input} placeholder="Enter your Email Address" placeholderTextColor={colors.textDark}/>
+            <TextInput 
+                style={styles.input} 
+                placeholder="Enter Your Email Address" 
+                placeholderTextColor={colors.textDark}
+                value={email}
+                onChangeText={setEmail}
+            />
           </View>
 
           <Text style={globalStyles.label}>Password</Text>
           <View style={styles.inputWrapper}>
             <Image source={require('../assets/icon/lock.png')} style={styles.icon} />
-            <TextInput style={styles.input} placeholder="Enter your Password" secureTextEntry placeholderTextColor={colors.textDark}/>
+            <TextInput 
+                style={styles.input} 
+                placeholder="Enter your Password" 
+                secureTextEntry 
+                placeholderTextColor={colors.textDark}
+                value={password}
+                onChangeText={setPassword}   
+            />
           </View>
-          <View style={styles.rowContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-              <Text style={styles.signUp}>Sign Up</Text>
-            </TouchableOpacity>
-            <Text style={styles.forgotPassword}>Forgot Password?</Text>
-          </View>
+
+          <Text style={styles.agree}>
+            Agree with{' '}
+            <Text style={styles.link}>Term & Condition</Text>
+          </Text>
+
 
           <View style={{ alignItems: 'center' }}>
-            <TouchableOpacity style={globalStyles.button}>
-              <Text style={globalStyles.buttonText}>Sign In</Text>
+            <TouchableOpacity style={globalStyles.button} onPress={handleRegister}>
+              <Text style={globalStyles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
           </View>
-
+          
           <View style={globalStyles.horizontalLine} />
 
-          <Text style={styles.orText}>Or Sign In With</Text>
+          <Text style={styles.orText}>Or Sign Up With</Text>
 
           <View style={styles.socialContainer}>
             <TouchableOpacity style={styles.socialButton}>
@@ -84,13 +136,13 @@ const styles = StyleSheet.create({
   },
   bottomBackground: {
     width: '100%',
-    height: '80%',
+    height: '85%',
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     overflow: 'hidden',
     backgroundColor: 'white',
-    padding: 20,
-    marginTop: -120,
+    padding: 10,
+    marginTop: -150,
   },
   headerTitle: {
     fontSize: 32,
@@ -120,17 +172,14 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
   },
-  rowContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: 10, 
+  agree: {
+    fontSize: 16,
+    color: 'black', 
   },
-  signUp: {
-    color: colors.primary,
-  },
-  forgotPassword: {
-    color: 'red',
+  link: {
+    color: 'blue', 
+    textDecorationLine: 'underline', 
+    fontWeight: 'bold', 
   },
   orText: {
     textAlign: 'center',
