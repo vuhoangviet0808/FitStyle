@@ -10,7 +10,8 @@ export const registerUser = async (name, email, password) => {
         },
         body: JSON.stringify({ name, email, password }),
       });
-  
+      
+      console.log("Raw response:", response);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
