@@ -1,0 +1,1 @@
+cmd='env;CFLAGS=/DWIN32 /D_WINDOWS /W3;CXXFLAGS=/DWIN32 /D_WINDOWS /W3 /GR /EHsc;D:/Clothes/prjClothes/build/external/glog-prefix/src/glog/configure;--prefix=D:/Clothes/prjClothes/build/external/glog-install;--enable-shared=no;--enable-static=yes;--with-gflags=D:/Clothes/prjClothes/build/external/gflags-install/lib/..'
