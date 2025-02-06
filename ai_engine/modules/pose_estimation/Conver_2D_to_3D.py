@@ -2,7 +2,7 @@ import json
 import numpy as np
 import cv2
 import os
-from process import get_keypoints_from_openpose
+from ai_engine.modules.pose_estimation.process import get_keypoints_from_openpose
 
 STANDARD_HEIGHT = 1.7
 IMAGE_DIR = os.path.abspath("../../../storage/input")

@@ -2,9 +2,9 @@ import os
 import json
 import subprocess
 import shutil
-IMAGE_DIR = os.path.abspath("../../../storage/input")
-OUTPUT_DIR = os.path.abspath("../../../storage/output")
-MODEL_DIR = os.path.abspath("./openpose/models")
+IMAGE_DIR = os.path.abspath("D:/Clothes/prjClothes/storage/input")
+OUTPUT_DIR = os.path.abspath("D:/Clothes/prjClothes/storage/output")
+MODEL_DIR = os.path.abspath("D:/Clothes/prjClothes/ai_engine/modules/pose_estimation/openpose/models")
 
 #Ham chay openpose len tat ca file anh trong 1 folder
 def run_openpose(image_path):
