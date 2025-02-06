@@ -1,1 +1,4 @@
-ai_engine/venv/ 
+ai_engine/venv/
+storage/input/person1
+storage/input/person2
+storage/output/person2

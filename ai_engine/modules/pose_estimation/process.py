@@ -1,10 +1,10 @@
 import os
 import json
 import subprocess
-
-IMAGE_DIR = os.path.abspath("./storage/input")
-OUTPUT_DIR = os.path.abspath("./storage/output")
-MODEL_DIR = os.path.abspath("./ai_engine/modules/pose_estimation/openpose/models")
+import shutil
+IMAGE_DIR = os.path.abspath("../../../storage/input")
+OUTPUT_DIR = os.path.abspath("../../../storage/output")
+MODEL_DIR = os.path.abspath("./openpose/models")
 
 #Ham chay openpose len tat ca file anh trong 1 folder
 def run_openpose(image_path):
@@ -38,22 +38,36 @@ def get_keypoints_from_openpose(image_path, take_keypoints=False):
     base_name = os.path.splitext(os.path.basename(image_path))[0]
     image_folder = os.path.abspath(os.path.join(IMAGE_DIR, base_name))
     output_folder = os.path.abspath(os.path.join(OUTPUT_DIR, base_name))
+    
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    keypoints_file = os.path.join(output_folder, f"{base_name}_keypoints.json")
-    if not os.path.exists(keypoints_file):
+
+    old_keypoints_1 = os.path.join(output_folder, f"{base_name}_keypoints.json")
+    old_keypoints_2 = os.path.join(output_folder, f"{base_name}back_keypoints.json")
+    
+    new_keypoints_1 = os.path.join(output_folder, "front.json")
+    new_keypoints_2 = os.path.join(output_folder, "back.json")
+
+    if not os.path.exists(new_keypoints_1) or not os.path.exists(new_keypoints_2):
         run_openpose(image_path)
-        
-    if not os.path.exists(keypoints_file):
+
+    if os.path.exists(old_keypoints_1):
+        shutil.move(old_keypoints_1, new_keypoints_1)
+    if os.path.exists(old_keypoints_2):
+        shutil.move(old_keypoints_2, new_keypoints_2)
+
+
+    if not os.path.exists(new_keypoints_1) or not os.path.exists(new_keypoints_2):
         print(f"❌ Không tìm thấy file keypoints cho ảnh {image_path}.")
         return None
-    
-    with open(keypoints_file, 'r') as f:
-        keypoints_2d = json.load(f)
+
+    with open(new_keypoints_1, 'r') as f1, open(new_keypoints_2, 'r') as f2:
+        keypoints_2d = [json.load(f1), json.load(f2)]
+
     if take_keypoints:
         return keypoints_2d
-    return keypoints_file
+    return new_keypoints_1, new_keypoints_2
 
 
 
@@ -61,7 +75,7 @@ def get_keypoints_from_openpose(image_path, take_keypoints=False):
 
 if __name__ == "__main__":
     image_path = "../../../storage/input/person2/person2.jpg"  
-    keypoints = get_keypoints_from_openpose(image_path)
+    keypoints = get_keypoints_from_openpose(image_path, False)
     if keypoints:
         print("✅ Keypoints 2D đã được lấy thành công!")
     else:
